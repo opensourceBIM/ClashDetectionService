@@ -126,11 +126,17 @@
 			</build>
 		</profile>
 	</profiles>
+	<repositories>
+		<repository>
+			<id>central</id>
+			<url>http://repo1.maven.org/maven2</url>
+		</repository>
+	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>org.opensourcebim</groupId>
 			<artifactId>pluginbase</artifactId>
-			<version>1.5.10-SNAPSHOT</version>
+			<version>1.5.11</version>
 		</dependency>
 	</dependencies>
 	<distributionManagement>

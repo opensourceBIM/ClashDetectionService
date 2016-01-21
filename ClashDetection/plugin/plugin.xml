@@ -3,11 +3,13 @@
 	<PluginImplementation>
 		<interfaceClass>org.bimserver.plugins.services.ServicePlugin</interfaceClass>
 		<implementationClass>org.bimserver.clashdetection.ClashDetectionServicePlugin</implementationClass>
+		<description>Clash detection service that generates BCF</description>
 		<enabled>true</enabled>
 	</PluginImplementation>
 	<PluginImplementation>
 		<interfaceClass>org.bimserver.plugins.services.ServicePlugin</interfaceClass>
 		<implementationClass>org.bimserver.clashdetection.ClashDetectionServiceJsonVisualizationPlugin</implementationClass>
+		<description>Clash detection service that generates visualization info</description>
 		<enabled>true</enabled>
 	</PluginImplementation>
 </PluginDescriptor>

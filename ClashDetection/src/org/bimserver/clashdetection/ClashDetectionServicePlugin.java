@@ -49,12 +49,10 @@ import org.slf4j.LoggerFactory;
 public class ClashDetectionServicePlugin extends ServicePlugin {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ClashDetectionServicePlugin.class);
-	private boolean initialized;
 
 	@Override
 	public void init(final PluginManagerInterface pluginManager) throws PluginException {
 		super.init(pluginManager);
-		initialized = true;
 	}
 
 	public void register(long uoid, SInternalServicePluginConfiguration internalServicePluginConfiguration, final PluginConfiguration pluginConfiguration) {
@@ -97,12 +95,16 @@ public class ClashDetectionServicePlugin extends ServicePlugin {
 							mainIfcProject = ifcProjects.get(0);
 						}
 
-						RenderEngine renderEngine = getPluginManager().requireRenderEngine().createRenderEngine(new PluginConfiguration(), "ifc2x3tc1");
+						// TODO get the default render engine
+						
+						RenderEngine renderEngine = null;//getPluginManager().requireRenderEngine().createRenderEngine(new PluginConfiguration(), "ifc2x3tc1");
 						renderEngine.init();
 
 						RenderEngineModel renderEngineModel = renderEngine.openModel(new ByteArrayInputStream(baos.toByteArray()), baos.size());
 
-						StillImageRenderer stillImageRenderer = getPluginManager().getFirstStillImageRenderPlugin().create(new PluginConfiguration());
+						// TODO get the default still image renderer
+						
+						StillImageRenderer stillImageRenderer = null;//getPluginManager().getFirstStillImageRenderPlugin().create(new PluginConfiguration());
 						boolean renderImage = true;
 						try {
 							stillImageRenderer.init(model);
@@ -233,21 +235,6 @@ public class ClashDetectionServicePlugin extends ServicePlugin {
 		direction.setY(y);
 		direction.setZ(z);
 		return direction;
-	}
-
-	@Override
-	public String getDescription() {
-		return "Provides clash detection service";
-	}
-
-	@Override
-	public String getVersion() {
-		return "1.0";
-	}
-
-	@Override
-	public boolean isInitialized() {
-		return initialized;
 	}
 
 	@Override

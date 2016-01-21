@@ -19,7 +19,7 @@ import com.google.common.base.Charsets;
 public class ClashDetectionServiceJsonVisualizationPlugin extends AbstractAddExtendedDataService {
 
 	public ClashDetectionServiceJsonVisualizationPlugin() {
-		super("Clash Detection Service (JSON vis)", "Clash detection service that creates a visualization JSON file as extended data", "http://bimserver.org/3dvisualizationeffects");
+		super("Clash Detection Service (JSON vis)", "http://bimserver.org/3dvisualizationeffects");
 	}
 
 	@Override
