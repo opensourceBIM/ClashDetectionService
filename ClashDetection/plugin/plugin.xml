@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PluginDescriptor>
-	<PluginImplementation>
+	<JavaPlugin>
 		<interfaceClass>org.bimserver.plugins.services.ServicePlugin</interfaceClass>
 		<implementationClass>org.bimserver.clashdetection.ClashDetectionServicePlugin</implementationClass>
 		<description>Clash detection service that generates BCF</description>
-		<enabled>true</enabled>
-	</PluginImplementation>
-	<PluginImplementation>
+	</JavaPlugin>
+	<JavaPlugin>
 		<interfaceClass>org.bimserver.plugins.services.ServicePlugin</interfaceClass>
 		<implementationClass>org.bimserver.clashdetection.ClashDetectionServiceJsonVisualizationPlugin</implementationClass>
 		<description>Clash detection service that generates visualization info</description>
-		<enabled>true</enabled>
-	</PluginImplementation>
+	</JavaPlugin>
 </PluginDescriptor>
