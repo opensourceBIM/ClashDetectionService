@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.opensourcebim</groupId>
 	<artifactId>clashdetection</artifactId>
-	<version>0.0.4-SNAPSHOT</version>
+	<version>0.0.4</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -197,7 +197,7 @@
 		<url>https://github.com/opensourceBIM/ClashDetectionService.git</url>
 		<connection>scm:git:https://github.com/opensourceBIM/ClashDetectionService.git</connection>
 		<developerConnection>scm:git:https://github.com/opensourceBIM/ClashDetectionService.git</developerConnection>
-		<tag>HEAD</tag>
+		<tag>clashdetection-0.0.4</tag>
 	</scm>
 	<organization>
 		<name>OpenSource BIM</name>
