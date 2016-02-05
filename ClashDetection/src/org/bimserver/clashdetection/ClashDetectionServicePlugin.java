@@ -28,7 +28,7 @@ import org.bimserver.models.store.ServiceDescriptor;
 import org.bimserver.models.store.StoreFactory;
 import org.bimserver.models.store.Trigger;
 import org.bimserver.plugins.PluginConfiguration;
-import org.bimserver.plugins.PluginManagerInterface;
+import org.bimserver.plugins.PluginContext;
 import org.bimserver.plugins.deserializers.Deserializer;
 import org.bimserver.plugins.renderengine.RenderEngine;
 import org.bimserver.plugins.renderengine.RenderEngineModel;
@@ -43,6 +43,7 @@ import org.bimserver.shared.exceptions.PublicInterfaceNotFoundException;
 import org.bimserver.shared.exceptions.ServerException;
 import org.bimserver.shared.exceptions.UserException;
 import org.bimserver.utils.ByteArrayDataSource;
+import org.bimserver.utils.DeserializerUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,8 +52,8 @@ public class ClashDetectionServicePlugin extends ServicePlugin {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ClashDetectionServicePlugin.class);
 
 	@Override
-	public void init(final PluginManagerInterface pluginManager) throws PluginException {
-		super.init(pluginManager);
+	public void init(PluginContext pluginContext) throws PluginException {
+		super.init(pluginContext);
 	}
 
 	public void register(long uoid, SInternalServicePluginConfiguration internalServicePluginConfiguration, final PluginConfiguration pluginConfiguration) {
@@ -88,7 +89,7 @@ public class ClashDetectionServicePlugin extends ServicePlugin {
 
 						Deserializer deserializer = getPluginManager().requireDeserializer("ifc").createDeserializer(new PluginConfiguration());
 //						deserializer.init(getPluginManager().requireSchemaDefinition());
-						IfcModelInterface model = deserializer.read(new ByteArrayInputStream(baos.toByteArray()), "test.ifc", baos.size());
+						IfcModelInterface model = DeserializerUtils.readFromBytes(deserializer, baos.toByteArray(), "test.ifc");
 						List<IfcProject> ifcProjects = model.getAll(IfcProject.class);
 						IfcProject mainIfcProject = null;
 						if (!ifcProjects.isEmpty()) {
@@ -240,11 +241,6 @@ public class ClashDetectionServicePlugin extends ServicePlugin {
 	@Override
 	public String getTitle() {
 		return "Clashdetection";
-	}
-
-	@Override
-	public String getDefaultName() {
-		return "ClashDetection";
 	}
 
 	@Override
