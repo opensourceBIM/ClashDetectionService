@@ -73,7 +73,7 @@ public class ClashDetectionServicePlugin extends ServicePlugin {
 
 				SSerializerPluginConfiguration sSerializer;
 				try {
-					sSerializer = bimServerClientInterface.getPluginInterface().getSerializerByPluginClassName("org.bimserver.ifc.step.serializer.IfcStepSerializerPlugin");
+					sSerializer = bimServerClientInterface.getPluginInterface().getSerializerByPluginClassName("org.bimserver.ifc.step.serializer.Ifc2x3tc1StepSerializerPlugin");
 
 					long download = bimServerClientInterface.getBimsie1ServiceInterface().download(roid, sSerializer.getOid(), true, true);
 					SDownloadResult downloadData = bimServerClientInterface.getBimsie1ServiceInterface().getDownloadData(download);
@@ -87,7 +87,7 @@ public class ClashDetectionServicePlugin extends ServicePlugin {
 							((EmfSerializerDataSource) dataSource).getSerializer().writeToOutputStream(baos, null);
 						}
 
-						Deserializer deserializer = getPluginManager().requireDeserializer("ifc").createDeserializer(new PluginConfiguration());
+						Deserializer deserializer = getPluginContext().requireDeserializer("ifc").createDeserializer(new PluginConfiguration());
 //						deserializer.init(getPluginManager().requireSchemaDefinition());
 						IfcModelInterface model = DeserializerUtils.readFromBytes(deserializer, baos.toByteArray(), "test.ifc");
 						List<IfcProject> ifcProjects = model.getAll(IfcProject.class);
