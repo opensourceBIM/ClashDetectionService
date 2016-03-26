@@ -2,6 +2,7 @@ package org.bimserver.clashdetection;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.Collections;
 import java.util.List;
 
 import javax.activation.DataSource;
@@ -75,7 +76,7 @@ public class ClashDetectionServicePlugin extends ServicePlugin {
 				try {
 					sSerializer = bimServerClientInterface.getPluginInterface().getSerializerByPluginClassName("org.bimserver.ifc.step.serializer.Ifc2x3tc1StepSerializerPlugin");
 
-					long download = bimServerClientInterface.getBimsie1ServiceInterface().download(roid, sSerializer.getOid(), true, true);
+					long download = bimServerClientInterface.getBimsie1ServiceInterface().downloadRevisions(Collections.singleton(roid), sSerializer.getOid(), true);
 					SDownloadResult downloadData = bimServerClientInterface.getBimsie1ServiceInterface().getDownloadData(download);
 
 					try {
@@ -247,7 +248,8 @@ public class ClashDetectionServicePlugin extends ServicePlugin {
 	public ObjectDefinition getSettingsDefinition() {
 		ObjectDefinition objectDefinition = StoreFactory.eINSTANCE.createObjectDefinition();
 		ParameterDefinition marginParameter = StoreFactory.eINSTANCE.createParameterDefinition();
-		marginParameter.setName("margin");
+		marginParameter.setIdentifier("margin");
+		marginParameter.setName("Margin");
 		marginParameter.setRequired(true);
 		DoubleType defaultValue = StoreFactory.eINSTANCE.createDoubleType();
 		defaultValue.setValue(0.0);
