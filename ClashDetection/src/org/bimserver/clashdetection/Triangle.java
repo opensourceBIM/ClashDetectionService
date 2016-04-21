@@ -335,7 +335,7 @@ public class Triangle {
 //		}
 //	}
 
-	public boolean intersects(Triangle triangle2, double epsilon) {
+	public boolean intersects(Triangle triangle2, double epsilon, double epsilon2) {
 		double []E1 = new double[3];
 		double []E2 = new double[3];
 		double []N1 = new double[3];
@@ -371,7 +371,7 @@ public class Triangle {
 		du0du1=du0*du1;
 		du0du2=du0*du2;
 		
-		if(du0du1>0.0 && du0du2>0.0) /* same sign on all of them + not equal 0 ? */
+		if(du0du1>-epsilon2 && du0du2>-epsilon2) /* same sign on all of them + not equal 0 ? */
 		return false;                    /* no intersection occurs */
 		
 		/* compute plane of triangle (U0,U1,U2) */
@@ -393,7 +393,7 @@ public class Triangle {
 		dv0dv1=dv0*dv1;
 		dv0dv2=dv0*dv2;
 		
-		if(dv0dv1>0.0 && dv0dv2>0.0) /* same sign on all of them + not equal 0 ? */
+		if(dv0dv1>-epsilon2 && dv0dv2>-epsilon2) /* same sign on all of them + not equal 0 ? */
 		return false;                    /* no intersection occurs */
 		
 		/* compute direction of intersection line */

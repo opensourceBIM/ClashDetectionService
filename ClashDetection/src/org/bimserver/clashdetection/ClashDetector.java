@@ -21,7 +21,7 @@ public class ClashDetector {
 		private String type2;
 
 		public Combination(String type1, String type2) {
-			// Make cononical
+			// Make canonical
 			if (type1.compareTo(type2) > 0) {
 				this.type1 = type1;
 				this.type2 = type2;
@@ -92,6 +92,7 @@ public class ClashDetector {
 	}
 
 	public List<Clash> findClashes() {
+		int nrWithoutGeometry = 0;
 		List<Clash> clashes = new ArrayList<Clash>();
 		for (int i=0; i<products.size(); i++) {
 			IfcProduct ifcProduct1 = products.get(i);
@@ -111,8 +112,11 @@ public class ClashDetector {
 						}
 					}
 				}
+			} else {
+				nrWithoutGeometry++;
 			}
 		}
+		System.out.println("Without geometry: " + nrWithoutGeometry);
 		System.out.println("Clashes: " + clashes.size());
 		return clashes;
 	}
@@ -155,7 +159,7 @@ public class ClashDetector {
 			Triangle triangle = new Triangle(indices1, vertices1, i, transformationArray1);
 			for (int j=0; j<indices2.capacity(); j+=3) {
 				Triangle triangle2 = new Triangle(indices2, vertices2, j, transformationArray2);
-				if (triangle.intersects(triangle2, epsilon)) {
+				if (triangle.intersects(triangle2, epsilon, epsilon)) {
 					return true;
 				}
 			}

@@ -8,6 +8,12 @@ import org.bimserver.emf.IfcModelInterface;
 import org.bimserver.interfaces.objects.SObjectType;
 import org.bimserver.interfaces.objects.SProject;
 import org.bimserver.models.ifc2x3tc1.IfcProduct;
+import org.bimserver.models.store.DoubleType;
+import org.bimserver.models.store.ObjectDefinition;
+import org.bimserver.models.store.ParameterDefinition;
+import org.bimserver.models.store.PrimitiveDefinition;
+import org.bimserver.models.store.PrimitiveEnum;
+import org.bimserver.models.store.StoreFactory;
 import org.bimserver.plugins.services.AbstractAddExtendedDataService;
 import org.bimserver.plugins.services.BimServerClientInterface;
 
@@ -19,14 +25,14 @@ import com.google.common.base.Charsets;
 public class ClashDetectionServiceJsonVisualizationPlugin extends AbstractAddExtendedDataService {
 
 	public ClashDetectionServiceJsonVisualizationPlugin() {
-		super("Clash Detection Service (JSON vis)", "http://bimserver.org/3dvisualizationeffects");
+		super("http://bimserver.org/3dvisualizationeffects");
 	}
 
 	@Override
 	public void newRevision(RunningService runningService, BimServerClientInterface bimServerClientInterface, long poid, long roid, String userToken, long soid, SObjectType settings) throws Exception {
-		SProject project = bimServerClientInterface.getBimsie1ServiceInterface().getProjectByPoid(poid);
+		SProject project = bimServerClientInterface.getServiceInterface().getProjectByPoid(poid);
 		IfcModelInterface model = bimServerClientInterface.getModel(project, roid, true, false, true);
-		ClashDetector clashDetector = new ClashDetector(model.getAllWithSubTypes(IfcProduct.class), 0.0000000001f);
+		ClashDetector clashDetector = new ClashDetector(model.getAllWithSubTypes(IfcProduct.class), runningService.getPluginConfiguration().getDouble("margin").floatValue());
 		List<Clash> clashes = clashDetector.findClashes();
 		
 		ObjectMapper objectMapper = new ObjectMapper();
@@ -64,5 +70,22 @@ public class ClashDetectionServiceJsonVisualizationPlugin extends AbstractAddExt
 		System.out.println("Unique GUID's in clashes: " + guids.size());
 		
 		addExtendedData(visNode.toString().getBytes(Charsets.UTF_8), "visualizationinfo.json", "Clashes (" + guids.size() + ")", "application/json", bimServerClientInterface, roid);
+	}
+	
+	@Override
+	public ObjectDefinition getSettingsDefinition() {
+		ObjectDefinition objectDefinition = StoreFactory.eINSTANCE.createObjectDefinition();
+		ParameterDefinition marginParameter = StoreFactory.eINSTANCE.createParameterDefinition();
+		marginParameter.setIdentifier("margin");
+		marginParameter.setName("Margin");
+		marginParameter.setRequired(true);
+		DoubleType defaultValue = StoreFactory.eINSTANCE.createDoubleType();
+		defaultValue.setValue(0.1);
+		marginParameter.setDefaultValue(defaultValue);
+		PrimitiveDefinition doubleDefinition = StoreFactory.eINSTANCE.createPrimitiveDefinition();
+		doubleDefinition.setType(PrimitiveEnum.DOUBLE);
+		marginParameter.setType(doubleDefinition);
+		objectDefinition.getParameters().add(marginParameter);
+		return objectDefinition;
 	}
 }

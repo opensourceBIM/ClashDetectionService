@@ -2,12 +2,14 @@
 <PluginDescriptor>
 	<JavaPlugin>
 		<interfaceClass>org.bimserver.plugins.services.ServicePlugin</interfaceClass>
-		<implementationClass>org.bimserver.clashdetection.ClashDetectionServicePlugin</implementationClass>
+		<implementationClass>org.bimserver.clashdetection.ClashDetectionServiceBcfPlugin</implementationClass>
+		<name>Clash Detection (BCF)</name>
 		<description>Clash detection service that generates BCF</description>
 	</JavaPlugin>
 	<JavaPlugin>
 		<interfaceClass>org.bimserver.plugins.services.ServicePlugin</interfaceClass>
 		<implementationClass>org.bimserver.clashdetection.ClashDetectionServiceJsonVisualizationPlugin</implementationClass>
 		<description>Clash detection service that generates visualization info</description>
+		<name>Clash Detection (VISINFO)</name>
 	</JavaPlugin>
 </PluginDescriptor>
