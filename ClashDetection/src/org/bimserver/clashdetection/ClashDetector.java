@@ -13,9 +13,10 @@ import java.util.Set;
 import org.bimserver.models.geometry.GeometryData;
 import org.bimserver.models.geometry.GeometryInfo;
 import org.bimserver.models.ifc2x3tc1.IfcProduct;
+import org.slf4j.LoggerFactory;
 
 public class ClashDetector {
-
+	private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(ClashDetector.class);
 	public static class Combination {
 		private String type1;
 		private String type2;
@@ -92,22 +93,33 @@ public class ClashDetector {
 	}
 
 	public List<Clash> findClashes() {
+		long start = System.nanoTime();
+		long totalTimeTriangles = 0;
 		int nrWithoutGeometry = 0;
+		long lastDump = 0;
 		List<Clash> clashes = new ArrayList<Clash>();
 		for (int i=0; i<products.size(); i++) {
 			IfcProduct ifcProduct1 = products.get(i);
 			GeometryInfo geometryInfo1 = ifcProduct1.getGeometry();
 			if (geometryInfo1 != null) {
 				for (int j = i + 1; j<products.size(); j++) {
+					if (System.nanoTime() - lastDump > 5000000000L) {
+						long totalTime = System.nanoTime() - start;
+						LOGGER.info((totalTimeTriangles * 100f / totalTime) + "%");
+						lastDump = System.nanoTime();
+					}
 					IfcProduct ifcProduct2 = products.get(j);
 					if (shouldCheck(ifcProduct1, ifcProduct2)) {
 						GeometryInfo geometryInfo2 = ifcProduct2.getGeometry();
 						if (geometryInfo2 != null) {
 							if (boundingBoxesClash(geometryInfo1, geometryInfo2)) {
+								long startTriangles = System.nanoTime();
 								if (trianglesClash(geometryInfo1, geometryInfo2)) {
 									clashes.add(new Clash(ifcProduct1, ifcProduct2));
 									System.out.println(ifcProduct1.eClass().getName() + " / " + ifcProduct2.eClass().getName());
 								}
+								long endTriangles = System.nanoTime();
+								totalTimeTriangles += (endTriangles - startTriangles);
 							}
 						}
 					}
@@ -157,11 +169,27 @@ public class ClashDetector {
 
 		for (int i=0; i<indices1.capacity(); i+=3) {
 			Triangle triangle = new Triangle(indices1, vertices1, i, transformationArray1);
-			for (int j=0; j<indices2.capacity(); j+=3) {
-				Triangle triangle2 = new Triangle(indices2, vertices2, j, transformationArray2);
-				if (triangle.intersects(triangle2, epsilon, epsilon)) {
-					return true;
+			if (triangleInBoundingBox(triangle, geometryInfo2)) {
+				for (int j=0; j<indices2.capacity(); j+=3) {
+					Triangle triangle2 = new Triangle(indices2, vertices2, j, transformationArray2);
+					if (triangle.intersects(triangle2, epsilon, epsilon)) {
+						return true;
+					}
 				}
+			}
+		}
+		return false;
+	}
+
+	private boolean triangleInBoundingBox(Triangle triangle, GeometryInfo geometryInfo2) {
+		for (double[] vertices : triangle.getVertices()) {
+			if (vertices[0] >= geometryInfo2.getMinBounds().getX() &&
+				vertices[0] <= geometryInfo2.getMaxBounds().getX() &&
+				vertices[1] >= geometryInfo2.getMinBounds().getY() &&
+				vertices[1] <= geometryInfo2.getMaxBounds().getY() &&
+				vertices[2] >= geometryInfo2.getMinBounds().getZ() &&
+				vertices[2] <= geometryInfo2.getMaxBounds().getZ()) {
+				return true;
 			}
 		}
 		return false;

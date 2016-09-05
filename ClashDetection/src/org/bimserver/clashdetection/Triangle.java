@@ -24,6 +24,10 @@ public class Triangle {
 		vertex2 = Matrix.multiplyV(transformation, new double[]{vertices.get(index2), vertices.get(index2 + 1), vertices.get(index2 + 2)});
 		vertex3 = Matrix.multiplyV(transformation, new double[]{vertices.get(index3), vertices.get(index3 + 1), vertices.get(index3 + 2)});
 	}
+
+	public double[][] getVertices() {
+		return new double[][]{vertex1, vertex2, vertex3};
+	}
 	
 	public double[] NEWCOMPUTE_INTERVALS(double VV0, double VV1, double VV2, double D0, double D1, double D2, double D0D1, double D0D2) {
 		double A;
