@@ -24,6 +24,8 @@ import com.google.common.base.Charsets;
 
 public class ClashDetectionServiceJsonVisualizationPlugin extends AbstractAddExtendedDataService {
 
+	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
 	public ClashDetectionServiceJsonVisualizationPlugin() {
 		super("http://bimserver.org/3dvisualizationeffects");
 	}
@@ -35,21 +37,19 @@ public class ClashDetectionServiceJsonVisualizationPlugin extends AbstractAddExt
 		ClashDetector clashDetector = new ClashDetector(model.getAllWithSubTypes(IfcProduct.class), runningService.getPluginConfiguration().getDouble("margin").floatValue());
 		List<Clash> clashes = clashDetector.findClashes();
 		
-		ObjectMapper objectMapper = new ObjectMapper();
-		
-		ObjectNode visNode = objectMapper.createObjectNode();
+		ObjectNode visNode = OBJECT_MAPPER.createObjectNode();
 		visNode.put("name", "Clashes");
-		ArrayNode changes = objectMapper.createArrayNode();
+		ArrayNode changes = OBJECT_MAPPER.createArrayNode();
 		visNode.set("changes", changes);
-		ObjectNode mainChange = objectMapper.createObjectNode();
+		ObjectNode mainChange = OBJECT_MAPPER.createObjectNode();
 		changes.add(mainChange);
-		ObjectNode selector = objectMapper.createObjectNode();
+		ObjectNode selector = OBJECT_MAPPER.createObjectNode();
 		mainChange.set("selector", selector);
-		ArrayNode guids = objectMapper.createArrayNode();
+		ArrayNode guids = OBJECT_MAPPER.createArrayNode();
 		selector.set("guids", guids);
-		ObjectNode effect = objectMapper.createObjectNode();
+		ObjectNode effect = OBJECT_MAPPER.createObjectNode();
 		mainChange.set("effect", effect);
-		ObjectNode color = objectMapper.createObjectNode();
+		ObjectNode color = OBJECT_MAPPER.createObjectNode();
 		effect.set("color", color);
 		color.put("r", 1);
 		color.put("g", 0);
