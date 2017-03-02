@@ -62,7 +62,7 @@ public class ClashDetectionServiceBcfPlugin extends AbstractAddExtendedDataServi
 			TopicFolder topicFolder = bcf.createTopicFolder();
 			topicFolder.setDefaultSnapShotToDummy();
 			
-			Topic topic = topicFolder.getTopic();
+			Topic topic = topicFolder.createTopic();
 			topic.setTitle("Clash");
 			XMLGregorianCalendar newXMLGregorianCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(now);
 			topic.setCreationDate(newXMLGregorianCalendar);
