@@ -44,7 +44,7 @@ public class ClashDetectionServiceJsonVisualizationPlugin extends AbstractAddExt
 	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
 	public ClashDetectionServiceJsonVisualizationPlugin() {
-		super("http://bimserver.org/3dvisualizationeffects");
+		super("VIS_3D_JSON_1_0");
 	}
 
 	@Override

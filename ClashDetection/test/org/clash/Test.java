@@ -17,6 +17,7 @@ import org.bimserver.models.ifc2x3tc1.IfcProduct;
 import org.bimserver.plugins.deserializers.DeserializeException;
 import org.bimserver.plugins.renderengine.RenderEngine;
 import org.bimserver.plugins.renderengine.RenderEngineException;
+import org.ifcopenshell.IfcGeomServerClient;
 import org.ifcopenshell.IfcOpenShellEngine;
 
 public class Test {
@@ -25,13 +26,18 @@ public class Test {
 		try {
 			Ifc2x3tc1StepDeserializer deserializer = new Ifc2x3tc1StepDeserializer(Schema.IFC2X3TC1);
 			Ifc2x3tc1StepSerializer serializer = new Ifc2x3tc1StepSerializer(null);
-			RenderEngine renderEngine = new IfcOpenShellEngine("C:\\Git\\IfcOpenShell-BIMserver-plugin\\exe\\64\\win\\IfcGeomServer.exe");
+			
+			IfcGeomServerClient test = new IfcGeomServerClient(IfcGeomServerClient.ExecutableSource.S3, Paths.get("tmp"));
+			String executableFilename = test.getExecutableFilename();
+			test.close();
+			
+			RenderEngine renderEngine = new IfcOpenShellEngine(executableFilename);
 			
 			renderEngine.init();
 			
 			PackageMetaData packageMetaData = new PackageMetaData(Ifc2x3tc1Package.eINSTANCE, Schema.IFC2X3TC1, Paths.get("."));
 			deserializer.init(packageMetaData);
-			IfcModelInterface model = deserializer.read(Paths.get("C:\\Git\\TestFiles\\TestData\\data\\export1.ifc").toFile());
+			IfcModelInterface model = deserializer.read(Paths.get("C:\\Git\\TestFiles\\TestData\\data\\AC11-Institute-Var-2-IFC.ifc").toFile());
 
 			OfflineGeometryGenerator offlineGeometryGenerator = new OfflineGeometryGenerator(model, serializer, renderEngine);
 			offlineGeometryGenerator.generateForAllElements();

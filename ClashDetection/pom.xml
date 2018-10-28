@@ -11,6 +11,7 @@
 	<description>BIMserver plugin that provides a ClashDetection service</description>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
+		<testSourceDirectory>test</testSourceDirectory>
 		<resources>
 			<resource>
 				<targetPath>plugin</targetPath>
@@ -171,7 +172,7 @@
 		<dependency>
 			<groupId>org.opensourcebim</groupId>
 			<artifactId>pluginbase</artifactId>
-			<version>1.5.68</version>
+			<version>1.5.112-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.opensourcebim</groupId>
@@ -192,7 +193,7 @@
 		<dependency>
 			<groupId>org.opensourcebim</groupId>
 			<artifactId>ifcopenshellplugin</artifactId>
-			<version>0.5.11</version>
+			<version>0.5.33-SNAPSHOT</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

@@ -166,11 +166,11 @@ public class ClashDetector {
 		GeometryData data1 = geometryInfo1.getData();
 		GeometryData data2 = geometryInfo2.getData();
 		
-		IntBuffer indices1 = getIntBuffer(data1.getIndices());
-		FloatBuffer vertices1 = getFloatBuffer(data1.getVertices());
+		IntBuffer indices1 = getIntBuffer(data1.getIndices().getData());
+		FloatBuffer vertices1 = getFloatBuffer(data1.getVertices().getData());
 
-		IntBuffer indices2 = getIntBuffer(data2.getIndices());
-		FloatBuffer vertices2 = getFloatBuffer(data2.getVertices());
+		IntBuffer indices2 = getIntBuffer(data2.getIndices().getData());
+		FloatBuffer vertices2 = getFloatBuffer(data2.getVertices().getData());
 		
 		DoubleBuffer transformation1 = getDoubleBuffer(geometryInfo1.getTransformation());
 		double[] transformationArray1 = new double[16];
@@ -200,12 +200,12 @@ public class ClashDetector {
 
 	private boolean triangleInBoundingBox(Triangle triangle, GeometryInfo geometryInfo2) {
 		for (double[] vertices : triangle.getVertices()) {
-			if (vertices[0] >= geometryInfo2.getMinBounds().getX() &&
-				vertices[0] <= geometryInfo2.getMaxBounds().getX() &&
-				vertices[1] >= geometryInfo2.getMinBounds().getY() &&
-				vertices[1] <= geometryInfo2.getMaxBounds().getY() &&
-				vertices[2] >= geometryInfo2.getMinBounds().getZ() &&
-				vertices[2] <= geometryInfo2.getMaxBounds().getZ()) {
+			if (vertices[0] >= geometryInfo2.getBounds().getMin().getX() &&
+				vertices[0] <= geometryInfo2.getBounds().getMax().getX() &&
+				vertices[1] >= geometryInfo2.getBounds().getMin().getY() &&
+				vertices[1] <= geometryInfo2.getBounds().getMax().getY() &&
+				vertices[2] >= geometryInfo2.getBounds().getMin().getZ() &&
+				vertices[2] <= geometryInfo2.getBounds().getMax().getZ()) {
 				return true;
 			}
 		}
@@ -236,11 +236,11 @@ public class ClashDetector {
 	}
 
 	private boolean boundingBoxesClash(GeometryInfo geometryInfo1, GeometryInfo geometryInfo2) {
-		return (geometryInfo1.getMaxBounds().getX() > geometryInfo2.getMinBounds().getX() &&
-				geometryInfo1.getMinBounds().getX() < geometryInfo2.getMaxBounds().getX() &&
-				geometryInfo1.getMaxBounds().getY() > geometryInfo2.getMinBounds().getY() &&
-				geometryInfo1.getMinBounds().getY() < geometryInfo2.getMaxBounds().getY() &&
-				geometryInfo1.getMaxBounds().getZ() > geometryInfo2.getMinBounds().getZ() &&
-				geometryInfo1.getMinBounds().getZ() < geometryInfo2.getMaxBounds().getZ());
+		return (geometryInfo1.getBounds().getMax().getX() > geometryInfo2.getBounds().getMin().getX() &&
+				geometryInfo1.getBounds().getMin().getX() < geometryInfo2.getBounds().getMax().getX() &&
+				geometryInfo1.getBounds().getMax().getY() > geometryInfo2.getBounds().getMin().getY() &&
+				geometryInfo1.getBounds().getMin().getY() < geometryInfo2.getBounds().getMax().getY() &&
+				geometryInfo1.getBounds().getMax().getZ() > geometryInfo2.getBounds().getMin().getZ() &&
+				geometryInfo1.getBounds().getMin().getZ() < geometryInfo2.getBounds().getMax().getZ());
 	}
 }

@@ -53,11 +53,11 @@ import org.slf4j.LoggerFactory;
 
 public class ClashDetectionServiceBcfPlugin extends AbstractAddExtendedDataService {
 
-	public ClashDetectionServiceBcfPlugin() {
-		super("http://www.buildingsmart-tech.org/specifications/bcf-releases");
-	}
-
 	private static final Logger LOGGER = LoggerFactory.getLogger(ClashDetectionServiceBcfPlugin.class);
+
+	public ClashDetectionServiceBcfPlugin() {
+		super("BCF_ZIP_2_0");
+	}
 
 	@Override
 	public void init(PluginContext pluginContext) throws PluginException {
