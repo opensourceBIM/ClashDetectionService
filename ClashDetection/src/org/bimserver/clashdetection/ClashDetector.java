@@ -22,14 +22,14 @@ import java.nio.ByteOrder;
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.bimserver.emf.IdEObject;
 import org.bimserver.models.geometry.GeometryData;
 import org.bimserver.models.geometry.GeometryInfo;
-import org.bimserver.models.ifc2x3tc1.IfcProduct;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.slf4j.LoggerFactory;
 
 public class ClashDetector {
@@ -81,7 +81,7 @@ public class ClashDetector {
 		}
 	}
 	
-	private List<IfcProduct> products;
+	private List<IdEObject> products;
 	private static final Set<Combination> combinationToIgnore = new HashSet<>();
 	private static final Set<String> typesToOnlyCheckWithOwnType = new HashSet<>();
 	private float epsilon;
@@ -104,35 +104,38 @@ public class ClashDetector {
 		combinationToIgnore.add(new Combination("IfcOpeningElement", "IfcDoor"));
 	}
 	
-	public ClashDetector(List<IfcProduct> products, float epsilon) {
+	public ClashDetector(List<IdEObject> products, float epsilon) {
 		this.products = products;
 		this.epsilon = epsilon;
 	}
 
-	public List<Clash> findClashes() {
+	public ClashDetectionResults findClashes() {
+		ClashDetectionResults clashDetectionResults = new ClashDetectionResults();
 		long start = System.nanoTime();
 		long totalTimeTriangles = 0;
 		int nrWithoutGeometry = 0;
+		int nrWithGeometry = 0;
 		long lastDump = 0;
-		List<Clash> clashes = new ArrayList<Clash>();
 		for (int i=0; i<products.size(); i++) {
-			IfcProduct ifcProduct1 = products.get(i);
-			GeometryInfo geometryInfo1 = ifcProduct1.getGeometry();
+			IdEObject ifcProduct1 = products.get(i);
+			EStructuralFeature geometryFeature = ifcProduct1.eClass().getEStructuralFeature("geometry");
+			GeometryInfo geometryInfo1 = (GeometryInfo) ifcProduct1.eGet(geometryFeature);
 			if (geometryInfo1 != null) {
+				nrWithGeometry++;
 				for (int j = i + 1; j<products.size(); j++) {
 					if (System.nanoTime() - lastDump > 5000000000L) {
 						long totalTime = System.nanoTime() - start;
 						LOGGER.info((totalTimeTriangles * 100f / totalTime) + "%");
 						lastDump = System.nanoTime();
 					}
-					IfcProduct ifcProduct2 = products.get(j);
+					IdEObject ifcProduct2 = products.get(j);
 					if (shouldCheck(ifcProduct1, ifcProduct2)) {
-						GeometryInfo geometryInfo2 = ifcProduct2.getGeometry();
+						GeometryInfo geometryInfo2 = (GeometryInfo) ifcProduct2.eGet(geometryFeature);
 						if (geometryInfo2 != null) {
 							if (boundingBoxesClash(geometryInfo1, geometryInfo2)) {
 								long startTriangles = System.nanoTime();
 								if (trianglesClash(geometryInfo1, geometryInfo2)) {
-									clashes.add(new Clash(ifcProduct1, ifcProduct2));
+									clashDetectionResults.add(new Clash(ifcProduct1, ifcProduct2));
 									System.out.println(ifcProduct1.eClass().getName() + " / " + ifcProduct2.eClass().getName());
 								}
 								long endTriangles = System.nanoTime();
@@ -145,12 +148,13 @@ public class ClashDetector {
 				nrWithoutGeometry++;
 			}
 		}
+		System.out.println("With geometry: " + nrWithGeometry);
 		System.out.println("Without geometry: " + nrWithoutGeometry);
-		System.out.println("Clashes: " + clashes.size());
-		return clashes;
+		System.out.println("Clashes: " + clashDetectionResults.size());
+		return clashDetectionResults;
 	}
 
-	private boolean shouldCheck(IfcProduct ifcProduct1, IfcProduct ifcProduct2) {
+	private boolean shouldCheck(IdEObject ifcProduct1, IdEObject ifcProduct2) {
 		String type1 = ifcProduct1.eClass().getName();
 		String type2 = ifcProduct2.eClass().getName();
 		if ((typesToOnlyCheckWithOwnType.contains(type1) || typesToOnlyCheckWithOwnType.contains(type2)) && !type1.equals(type2)) {

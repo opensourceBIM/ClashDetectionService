@@ -2,6 +2,12 @@
 <PluginDescriptor>
 	<JavaPlugin>
 		<interfaceClass>org.bimserver.plugins.services.ServicePlugin</interfaceClass>
+		<implementationClass>org.bimserver.clashdetection.ClashDetectionBimBot</implementationClass>
+		<name>Clash Detection (JSON)</name>
+		<description>Clash detection service that generates CLASHDETECTION_RESULT_JSON_1_0</description>
+	</JavaPlugin>
+	<JavaPlugin>
+		<interfaceClass>org.bimserver.plugins.services.ServicePlugin</interfaceClass>
 		<implementationClass>org.bimserver.clashdetection.ClashDetectionServiceBcfPlugin</implementationClass>
 		<name>Clash Detection (BCF)</name>
 		<description>Clash detection service that generates BCF</description>

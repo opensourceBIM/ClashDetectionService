@@ -5,7 +5,9 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import org.bimserver.clashdetection.Clash;
+import org.bimserver.clashdetection.ClashDetectionResults;
 import org.bimserver.clashdetection.ClashDetector;
+import org.bimserver.emf.IdEObject;
 import org.bimserver.emf.IfcModelInterface;
 import org.bimserver.emf.OfflineGeometryGenerator;
 import org.bimserver.emf.PackageMetaData;
@@ -42,12 +44,12 @@ public class Test {
 			OfflineGeometryGenerator offlineGeometryGenerator = new OfflineGeometryGenerator(model, serializer, renderEngine);
 			offlineGeometryGenerator.generateForAllElements();
 			
-			List<IfcProduct> products = model.getAllWithSubTypes(IfcProduct.class);
+			List<IdEObject> products = model.getAllWithSubTypes(model.getPackageMetaData().getEClass("IfcProduct"));
 			
 			ClashDetector clashDetector = new ClashDetector(products, 1f);
-			List<Clash> clashes = clashDetector.findClashes();
+			ClashDetectionResults findClashes = clashDetector.findClashes();
 			
-			System.out.println(clashes.size());
+			System.out.println(findClashes.size());
 		} catch (DeserializeException e) {
 			e.printStackTrace();
 		} catch (RenderEngineException e) {

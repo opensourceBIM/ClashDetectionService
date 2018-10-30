@@ -24,7 +24,9 @@ import java.util.UUID;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.bimserver.emf.IdEObject;
 import org.bimserver.emf.IfcModelInterface;
+import org.bimserver.emf.PackageMetaData;
 import org.bimserver.interfaces.objects.SInternalServicePluginConfiguration;
 import org.bimserver.interfaces.objects.SObjectType;
 import org.bimserver.interfaces.objects.SProject;
@@ -40,6 +42,7 @@ import org.bimserver.plugins.services.AbstractAddExtendedDataService;
 import org.bimserver.plugins.services.BimServerClientInterface;
 import org.bimserver.shared.exceptions.PluginException;
 import org.bimserver.utils.IfcUtils;
+import org.eclipse.emf.ecore.EClass;
 import org.opensourcebim.bcf.BcfFile;
 import org.opensourcebim.bcf.TopicFolder;
 import org.opensourcebim.bcf.markup.Header;
@@ -70,10 +73,12 @@ public class ClashDetectionServiceBcfPlugin extends AbstractAddExtendedDataServi
 
 		SProject project = bimServerClientInterface.getServiceInterface().getProjectByPoid(poid);
 		IfcModelInterface model = bimServerClientInterface.getModel(project, roid, true, false, true);
-		ClashDetector clashDetector = new ClashDetector(model.getAllWithSubTypes(IfcProduct.class), runningService.getPluginConfiguration().getDouble("margin").floatValue());
-		List<Clash> clashes = clashDetector.findClashes();
+		PackageMetaData packageMetaData = model.getPackageMetaData();
+		EClass ifcProductClass = packageMetaData.getEClass("IfcProduct");
+		ClashDetector clashDetector = new ClashDetector(model.getAllWithSubTypes(ifcProductClass), runningService.getPluginConfiguration().getDouble("margin").floatValue());
+		ClashDetectionResults clashDetectionResults = clashDetector.findClashes();
 		
-		for (Clash clash : clashes) {
+		for (Clash clash : clashDetectionResults.getClashes()) {
 			GregorianCalendar now = new GregorianCalendar();
 
 			TopicFolder topicFolder = bcf.createTopicFolder();
@@ -94,9 +99,10 @@ public class ClashDetectionServiceBcfPlugin extends AbstractAddExtendedDataServi
 			List<File> files = header.getFile();
 			
 			File file1 = new File();
-			String ifcProject1 = IfcUtils.getIfcProject(clash.getIfcProduct1()).getGlobalId();
+			IdEObject ifcProject = IfcUtils.getIfcProject(clash.getIfcProduct1());
+			String ifcProject1 = (String) ifcProject.eGet(ifcProject.eClass().getEStructuralFeature("GlobalId"));
 			file1.setIfcProject(ifcProject1);
-			file1.setIfcSpatialStructureElement(clash.getIfcProduct1().getGlobalId());
+			file1.setIfcSpatialStructureElement((String) clash.getIfcProduct1().eGet(clash.getIfcProduct1().eClass().getEStructuralFeature("GlobalId")));
 			file1.setIsExternal(true);
 
 			// TODO
@@ -104,10 +110,11 @@ public class ClashDetectionServiceBcfPlugin extends AbstractAddExtendedDataServi
 			file1.setDate(newXMLGregorianCalendar);
 			files.add(file1);
 
-			String ifcProject2 = IfcUtils.getIfcProject(clash.getIfcProduct2()).getGlobalId();
+			IdEObject ifcProject3 = IfcUtils.getIfcProject(clash.getIfcProduct2());
+			String ifcProject2 = (String) ifcProject3.eGet(ifcProject3.eClass().getEStructuralFeature("GlobalId"));
 			File file2 = new File();
 			file2.setIfcProject(ifcProject2);
-			file2.setIfcSpatialStructureElement(clash.getIfcProduct1().getGlobalId());
+			file2.setIfcSpatialStructureElement((String) clash.getIfcProduct2().eGet(clash.getIfcProduct2().eClass().getEStructuralFeature("GlobalId")));
 			file2.setIsExternal(true);
 			
 			// TODO

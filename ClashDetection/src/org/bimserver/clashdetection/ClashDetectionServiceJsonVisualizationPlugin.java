@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.bimserver.emf.IfcModelInterface;
+import org.bimserver.emf.PackageMetaData;
 import org.bimserver.interfaces.objects.SObjectType;
 import org.bimserver.interfaces.objects.SProject;
 import org.bimserver.models.ifc2x3tc1.IfcProduct;
@@ -33,6 +34,7 @@ import org.bimserver.models.store.PrimitiveEnum;
 import org.bimserver.models.store.StoreFactory;
 import org.bimserver.plugins.services.AbstractAddExtendedDataService;
 import org.bimserver.plugins.services.BimServerClientInterface;
+import org.eclipse.emf.ecore.EClass;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -51,8 +53,10 @@ public class ClashDetectionServiceJsonVisualizationPlugin extends AbstractAddExt
 	public void newRevision(RunningService runningService, BimServerClientInterface bimServerClientInterface, long poid, long roid, String userToken, long soid, SObjectType settings) throws Exception {
 		SProject project = bimServerClientInterface.getServiceInterface().getProjectByPoid(poid);
 		IfcModelInterface model = bimServerClientInterface.getModel(project, roid, true, false, true);
-		ClashDetector clashDetector = new ClashDetector(model.getAllWithSubTypes(IfcProduct.class), runningService.getPluginConfiguration().getDouble("margin").floatValue());
-		List<Clash> clashes = clashDetector.findClashes();
+		PackageMetaData packageMetaData = model.getPackageMetaData();
+		EClass ifcProductClass = packageMetaData.getEClass("IfcProduct");
+		ClashDetector clashDetector = new ClashDetector(model.getAllWithSubTypes(ifcProductClass), runningService.getPluginConfiguration().getDouble("margin").floatValue());
+		ClashDetectionResults clashDetectionResults = clashDetector.findClashes();
 		
 		ObjectNode visNode = OBJECT_MAPPER.createObjectNode();
 		visNode.put("name", "Clashes");
@@ -75,9 +79,9 @@ public class ClashDetectionServiceJsonVisualizationPlugin extends AbstractAddExt
 		
 		Set<String> guidsSet = new HashSet<>();
 		
-		for (Clash clash : clashes) {
-			guidsSet.add(clash.getIfcProduct1().getGlobalId());
-			guidsSet.add(clash.getIfcProduct2().getGlobalId());
+		for (Clash clash : clashDetectionResults.getClashes()) {
+			guidsSet.add((String) clash.getIfcProduct1().eGet(clash.getIfcProduct1().eClass().getEStructuralFeature("GlobalId")));
+			guidsSet.add((String) clash.getIfcProduct2().eGet(clash.getIfcProduct2().eClass().getEStructuralFeature("GlobalId")));
 		}
 		
 		for (String guid : guidsSet) {

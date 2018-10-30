@@ -1,5 +1,7 @@
 package org.bimserver.clashdetection;
 
+import org.bimserver.emf.IdEObject;
+
 /******************************************************************************
  * Copyright (C) 2009-2017  BIMserver.org
  * 
@@ -18,22 +20,44 @@ package org.bimserver.clashdetection;
  *****************************************************************************/
 
 import org.bimserver.models.ifc2x3tc1.IfcProduct;
+import org.eclipse.emf.ecore.EStructuralFeature;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class Clash {
 
-	private IfcProduct ifcProduct1;
-	private IfcProduct ifcProduct2;
+	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+	private IdEObject ifcProduct1;
+	private IdEObject ifcProduct2;
 
-	public Clash(IfcProduct ifcProduct1, IfcProduct ifcProduct2) {
+	public Clash(IdEObject ifcProduct1, IdEObject ifcProduct2) {
 		this.ifcProduct1 = ifcProduct1;
 		this.ifcProduct2 = ifcProduct2;
 	}
 	
-	public IfcProduct getIfcProduct1() {
+	public IdEObject getIfcProduct1() {
 		return ifcProduct1;
 	}
 	
-	public IfcProduct getIfcProduct2() {
+	public IdEObject getIfcProduct2() {
 		return ifcProduct2;
+	}
+
+	public JsonNode toJson() {
+		ObjectNode objectNode = OBJECT_MAPPER.createObjectNode();
+		ObjectNode object1Node = OBJECT_MAPPER.createObjectNode();
+		ObjectNode object2Node = OBJECT_MAPPER.createObjectNode();
+		
+		EStructuralFeature guidFeature = ifcProduct1.eClass().getEStructuralFeature("GlobalId");
+		
+		object1Node.put("guid", (String)ifcProduct1.eGet(guidFeature));
+		object2Node.put("guid", (String)ifcProduct2.eGet(guidFeature));
+		
+		objectNode.set("object1", object1Node);
+		objectNode.set("object2", object2Node);
+		
+		return objectNode;
 	}
 }
