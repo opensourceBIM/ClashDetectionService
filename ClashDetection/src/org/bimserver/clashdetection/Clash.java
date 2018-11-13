@@ -1,25 +1,6 @@
 package org.bimserver.clashdetection;
 
 import org.bimserver.emf.IdEObject;
-
-/******************************************************************************
- * Copyright (C) 2009-2017  BIMserver.org
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see {@literal<http://www.gnu.org/licenses/>}.
- *****************************************************************************/
-
-import org.bimserver.models.ifc2x3tc1.IfcProduct;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -31,12 +12,51 @@ public class Clash {
 	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 	private IdEObject ifcProduct1;
 	private IdEObject ifcProduct2;
+	private long oid1;
+	private long oid2;
 
 	public Clash(IdEObject ifcProduct1, IdEObject ifcProduct2) {
 		this.ifcProduct1 = ifcProduct1;
 		this.ifcProduct2 = ifcProduct2;
+		if (ifcProduct1.getOid() == ifcProduct2.getOid()) {
+			throw new RuntimeException("Clashes cannot happen within the same object in this implementation");
+		}
+		// Make the Clash itself canonical by always putting the objects with the lowest oid first
+		// This works because the hashCode/equals methods only rely on the oids
+		if (ifcProduct1.getOid() < ifcProduct2.getOid()) {
+			this.oid1 = ifcProduct1.getOid();
+			this.oid2 = ifcProduct2.getOid();
+		} else {
+			this.oid1 = ifcProduct2.getOid();
+			this.oid2 = ifcProduct1.getOid();
+		}
 	}
-	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (oid1 ^ (oid1 >>> 32));
+		result = prime * result + (int) (oid2 ^ (oid2 >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Clash other = (Clash) obj;
+		if (oid1 != other.oid1)
+			return false;
+		if (oid2 != other.oid2)
+			return false;
+		return true;
+	}
+
 	public IdEObject getIfcProduct1() {
 		return ifcProduct1;
 	}
@@ -51,9 +71,13 @@ public class Clash {
 		ObjectNode object2Node = OBJECT_MAPPER.createObjectNode();
 		
 		EStructuralFeature guidFeature = ifcProduct1.eClass().getEStructuralFeature("GlobalId");
+		EStructuralFeature nameFeature = ifcProduct1.eClass().getEStructuralFeature("Name");
 		
 		object1Node.put("guid", (String)ifcProduct1.eGet(guidFeature));
 		object2Node.put("guid", (String)ifcProduct2.eGet(guidFeature));
+
+		object1Node.put("name", (String)ifcProduct1.eGet(nameFeature));
+		object2Node.put("name", (String)ifcProduct2.eGet(nameFeature));
 		
 		objectNode.set("object1", object1Node);
 		objectNode.set("object2", object2Node);

@@ -1,12 +1,14 @@
 package org.bimserver.clashdetection;
 
+import java.util.List;
+
 import org.bimserver.bimbots.BimBotContext;
 import org.bimserver.bimbots.BimBotsException;
 import org.bimserver.bimbots.BimBotsInput;
 import org.bimserver.bimbots.BimBotsOutput;
+import org.bimserver.emf.IdEObject;
 import org.bimserver.emf.IfcModelInterface;
 import org.bimserver.emf.PackageMetaData;
-import org.bimserver.interfaces.objects.SObjectType;
 import org.bimserver.models.store.DoubleType;
 import org.bimserver.models.store.ObjectDefinition;
 import org.bimserver.models.store.ParameterDefinition;
@@ -22,12 +24,12 @@ import com.google.common.base.Charsets;
 public class ClashDetectionBimBot extends BimBotAbstractService {
 
 	@Override
-	public BimBotsOutput runBimBot(BimBotsInput input, BimBotContext bimBotContext, SObjectType settings) throws BimBotsException {
+	public BimBotsOutput runBimBot(BimBotsInput input, BimBotContext bimBotContext, PluginConfiguration pluginConfiguration) throws BimBotsException {
 		IfcModelInterface model = input.getIfcModel();
-		PluginConfiguration pluginConfiguration = new PluginConfiguration(settings);
 		PackageMetaData packageMetaData = model.getPackageMetaData();
 		EClass ifcProductClass = packageMetaData.getEClass("IfcProduct");
-		ClashDetector clashDetector = new ClashDetector(model.getAllWithSubTypes(ifcProductClass), pluginConfiguration.getDouble("margin").floatValue());
+		List<IdEObject> products = model.getAllWithSubTypes(ifcProductClass);
+		ClashDetector clashDetector = new ClashDetector(products, pluginConfiguration.getDouble("margin").floatValue());
 		ClashDetectionResults clashDetectionResults = clashDetector.findClashes();
 
 		BimBotsOutput bimBotsOutput = new BimBotsOutput("CLASHDETECTION_RESULT_JSON_1_0", clashDetectionResults.toJson().toString().getBytes(Charsets.UTF_8));
@@ -57,5 +59,15 @@ public class ClashDetectionBimBot extends BimBotAbstractService {
 	@Override
 	public String getOutputSchema() {
 		return "CLASHDETECTION_RESULT_JSON_1_0";
+	}
+	
+	@Override
+	public boolean preloadCompleteModel() {
+		return true;
+	}
+	
+	@Override
+	public boolean requiresGeometry() {
+		return true;
 	}
 }

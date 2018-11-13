@@ -172,7 +172,7 @@
 		<dependency>
 			<groupId>org.opensourcebim</groupId>
 			<artifactId>pluginbase</artifactId>
-			<version>1.5.112-SNAPSHOT</version>
+			<version>1.5.114-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.opensourcebim</groupId>
@@ -193,7 +193,7 @@
 		<dependency>
 			<groupId>org.opensourcebim</groupId>
 			<artifactId>ifcopenshellplugin</artifactId>
-			<version>0.5.33-SNAPSHOT</version>
+			<version>0.5.36-SNAPSHOT</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

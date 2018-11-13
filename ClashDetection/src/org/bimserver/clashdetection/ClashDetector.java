@@ -85,6 +85,7 @@ public class ClashDetector {
 	private static final Set<Combination> combinationToIgnore = new HashSet<>();
 	private static final Set<String> typesToOnlyCheckWithOwnType = new HashSet<>();
 	private float epsilon;
+	private int notEnoughData;
 
 	static {
 		typesToOnlyCheckWithOwnType.add("IfcSpace");
@@ -133,13 +134,16 @@ public class ClashDetector {
 						GeometryInfo geometryInfo2 = (GeometryInfo) ifcProduct2.eGet(geometryFeature);
 						if (geometryInfo2 != null) {
 							if (boundingBoxesClash(geometryInfo1, geometryInfo2)) {
-								long startTriangles = System.nanoTime();
-								if (trianglesClash(geometryInfo1, geometryInfo2)) {
-									clashDetectionResults.add(new Clash(ifcProduct1, ifcProduct2));
-									System.out.println(ifcProduct1.eClass().getName() + " / " + ifcProduct2.eClass().getName());
+								if (enoughData(geometryInfo1, geometryInfo2)) {
+									long startTriangles = System.nanoTime();
+									if (trianglesClash(geometryInfo1, geometryInfo2)) {
+										clashDetectionResults.add(new Clash(ifcProduct1, ifcProduct2));
+									}
+									long endTriangles = System.nanoTime();
+									totalTimeTriangles += (endTriangles - startTriangles);
+								} else {
+									notEnoughData++;
 								}
-								long endTriangles = System.nanoTime();
-								totalTimeTriangles += (endTriangles - startTriangles);
 							}
 						}
 					}
@@ -150,8 +154,25 @@ public class ClashDetector {
 		}
 		System.out.println("With geometry: " + nrWithGeometry);
 		System.out.println("Without geometry: " + nrWithoutGeometry);
+		System.out.println("Not enough data: " + notEnoughData);
 		System.out.println("Clashes: " + clashDetectionResults.size());
 		return clashDetectionResults;
+	}
+
+	private boolean enoughData(GeometryInfo geometryInfo1, GeometryInfo geometryInfo2) {
+		GeometryData data1 = geometryInfo1.getData();
+		GeometryData data2 = geometryInfo2.getData();
+		
+		if (data1 == null || data2 == null) {
+			return false;
+		}
+		if (data1.getIndices() == null || data2.getIndices() == null) {
+			return false;
+		}
+		if (data1.getIndices().getData() == null || data2.getIndices().getData() == null) {
+			return false;
+		}
+		return true;
 	}
 
 	private boolean shouldCheck(IdEObject ifcProduct1, IdEObject ifcProduct2) {
@@ -169,6 +190,16 @@ public class ClashDetector {
 	private boolean trianglesClash(GeometryInfo geometryInfo1, GeometryInfo geometryInfo2) {
 		GeometryData data1 = geometryInfo1.getData();
 		GeometryData data2 = geometryInfo2.getData();
+		
+		if (data1 == null || data2 == null) {
+			return false;
+		}
+		if (data1.getIndices() == null || data2.getIndices() == null) {
+			return false;
+		}
+		if (data1.getIndices().getData() == null || data2.getIndices().getData() == null) {
+			return false;
+		}
 		
 		IntBuffer indices1 = getIntBuffer(data1.getIndices().getData());
 		FloatBuffer vertices1 = getFloatBuffer(data1.getVertices().getData());

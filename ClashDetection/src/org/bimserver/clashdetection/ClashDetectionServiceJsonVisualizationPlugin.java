@@ -18,14 +18,12 @@ package org.bimserver.clashdetection;
  *****************************************************************************/
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.bimserver.emf.IfcModelInterface;
 import org.bimserver.emf.PackageMetaData;
 import org.bimserver.interfaces.objects.SObjectType;
 import org.bimserver.interfaces.objects.SProject;
-import org.bimserver.models.ifc2x3tc1.IfcProduct;
 import org.bimserver.models.store.DoubleType;
 import org.bimserver.models.store.ObjectDefinition;
 import org.bimserver.models.store.ParameterDefinition;

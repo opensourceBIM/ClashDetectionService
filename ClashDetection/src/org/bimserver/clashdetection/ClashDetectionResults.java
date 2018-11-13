@@ -1,21 +1,21 @@
 package org.bimserver.clashdetection;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
 public class ClashDetectionResults {
 
-	private final List<Clash> clashes = new ArrayList<>();
+	private final Set<Clash> clashes = new HashSet<>();
 	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 	
 	public void add(Clash clash) {
 		clashes.add(clash);		
 	}
 	
-	public List<Clash> getClashes() {
+	public Set<Clash> getClashes() {
 		return clashes;
 	}
 	
