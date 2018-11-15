@@ -23,7 +23,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.TimeZone;
-import java.util.UUID;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -99,10 +98,11 @@ public class ClashDetectionServiceBcfPlugin extends BimBotAbstractService {
 			
 			Topic topic = topicFolder.createTopic();
 			topic.setTitle("Clash");
+			topic.setTopicType("CLASH");
+			topic.setTopicStatus("ERROR");
 			XMLGregorianCalendar newXMLGregorianCalendar = DATE_FACTORY.newXMLGregorianCalendar(now);
 			topic.setCreationDate(newXMLGregorianCalendar);
-			topic.setGuid(UUID.randomUUID().toString());
-			topic.setReferenceLink(getPluginContext().getBasicServerInfo().getSiteAddress());
+			topic.getReferenceLink().add(getPluginContext().getBasicServerInfo().getSiteAddress());
 			
 			topic.setCreationAuthor(bimBotContext.getCurrentUser());
 			
