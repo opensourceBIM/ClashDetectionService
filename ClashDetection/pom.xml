@@ -1,10 +1,8 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.opensourcebim</groupId>
 	<artifactId>clashdetection</artifactId>
-	<version>0.0.16-SNAPSHOT</version>
+	<version>0.0.16</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<timestamp>${maven.build.timestamp}</timestamp>
@@ -219,7 +217,7 @@
 		<url>https://github.com/opensourceBIM/ClashDetectionService.git</url>
 		<connection>scm:git:https://github.com/opensourceBIM/ClashDetectionService.git</connection>
 		<developerConnection>scm:git:https://github.com/opensourceBIM/ClashDetectionService.git</developerConnection>
-		<tag>clashdetection-0.0.10</tag>
+		<tag>clashdetection-0.0.16</tag>
 	</scm>
 	<organization>
 		<name>OpenSource BIM</name>
