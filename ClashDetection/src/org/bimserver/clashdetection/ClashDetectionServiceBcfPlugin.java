@@ -147,7 +147,10 @@ public class ClashDetectionServiceBcfPlugin extends BimBotAbstractService {
 			files.add(file2);
 		}
 		try {
-			return new BimBotsOutput(getOutputSchema(), bcf.toBytes());
+			BimBotsOutput bimBotsOutput = new BimBotsOutput(getOutputSchema(), bcf.toBytes());
+			bimBotsOutput.setContentType("application/zip");
+			bimBotsOutput.setTitle("Clash Detection BCF results");
+			return bimBotsOutput;
 		} catch (BcfException e) {
 			LOGGER.error("", e);
 		} catch (IOException e) {
