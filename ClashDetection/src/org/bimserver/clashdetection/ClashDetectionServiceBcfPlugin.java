@@ -75,8 +75,8 @@ public class ClashDetectionServiceBcfPlugin extends BimBotAbstractService {
 	}
 	
 	@Override
-	public void init(PluginContext pluginContext) throws PluginException {
-		super.init(pluginContext);
+	public void init(PluginContext pluginContext, PluginConfiguration systemSettings) throws PluginException {
+		super.init(pluginContext, systemSettings);
 	}
 
 	@Override
@@ -193,7 +193,7 @@ public class ClashDetectionServiceBcfPlugin extends BimBotAbstractService {
 	}
 	
 	@Override
-	public ObjectDefinition getSettingsDefinition() {
+	public ObjectDefinition getUserSettingsDefinition() {
 		ObjectDefinition objectDefinition = StoreFactory.eINSTANCE.createObjectDefinition();
 		ParameterDefinition marginParameter = StoreFactory.eINSTANCE.createParameterDefinition();
 		marginParameter.setIdentifier("margin");

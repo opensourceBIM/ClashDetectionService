@@ -40,7 +40,7 @@ public class ClashDetectionBimBot extends BimBotAbstractService {
 	}
 
 	@Override
-	public ObjectDefinition getSettingsDefinition() {
+	public ObjectDefinition getUserSettingsDefinition() {
 		ObjectDefinition objectDefinition = StoreFactory.eINSTANCE.createObjectDefinition();
 		ParameterDefinition marginParameter = StoreFactory.eINSTANCE.createParameterDefinition();
 		marginParameter.setIdentifier("margin");
