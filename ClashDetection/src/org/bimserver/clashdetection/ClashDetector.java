@@ -176,6 +176,10 @@ public class ClashDetector {
 	}
 
 	private boolean shouldCheck(IdEObject ifcProduct1, IdEObject ifcProduct2) {
+		if (ifcProduct1.getOid() == ifcProduct2.getOid()) {
+			// As this is forbidden in Clash class, we do that early here
+			return false;
+		}
 		String type1 = ifcProduct1.eClass().getName();
 		String type2 = ifcProduct2.eClass().getName();
 		if ((typesToOnlyCheckWithOwnType.contains(type1) || typesToOnlyCheckWithOwnType.contains(type2)) && !type1.equals(type2)) {
@@ -184,6 +188,7 @@ public class ClashDetector {
 		if (combinationToIgnore.contains(new Combination(type1, type2))) {
 			return false;
 		}
+
 		return true;
 	}
 

@@ -12,6 +12,9 @@
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<testSourceDirectory>test</testSourceDirectory>
+		<testResource>
+			<directory>ifcForTest</directory>
+		</testResource>
 		<resources>
 			<resource>
 				<targetPath>plugin</targetPath>
@@ -178,12 +181,12 @@
 		<dependency>
 			<groupId>org.opensourcebim</groupId>
 			<artifactId>pluginbase</artifactId>
-			<version>1.5.118-SNAPSHOT</version>
+			<version>1.5.125-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.opensourcebim</groupId>
 			<artifactId>ifcplugins</artifactId>
-			<version>0.0.41</version>
+			<version>0.0.58-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.opensourcebim</groupId>
@@ -199,7 +202,7 @@
 		<dependency>
 			<groupId>org.opensourcebim</groupId>
 			<artifactId>ifcopenshellplugin</artifactId>
-			<version>0.5.35</version>
+			<version>0.5.49-SNAPSHOT</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
